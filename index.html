@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Sukhi 💟</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background: radial-gradient(circle at center, #1a0a1a 0%, #050505 100%);
+            color: #fff;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .font-cute { font-family: 'Dancing Script', cursive; }
+        .page { display: none; height: 100vh; width: 100%; align-items: center; justify-content: center; padding: 20px; text-align: center; position: absolute; }
+        .page.active { display: flex; flex-direction: column; }
+
+        .btn-cute {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Card Stack Styles */
+        .card-stack {
+            position: relative;
+            width: 320px;
+            height: 450px;
+            perspective: 1000px;
+        }
+        .photo-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.5s ease;
+            cursor: pointer;
+            color: #333;
+        }
+        .photo-card img {
+            width: 100%;
+            height: 80%;
+            object-fit: cover;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+        .quote-text {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-style: italic;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .heart { position: fixed; color: #ff6b6b; pointer-events: none; z-index: 0; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 30px; width: 90%; max-width: 450px; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+        </audio>
+
+    <div id="heart-container"></div>
+
+    <div id="step1" class="page active">
+        <h1 class="font-cute text-6xl text-pink-400 mb-6">Happy New Year, Sukhi! 🧸</h1>
+        <button onclick="startExperience()" class="btn-cute">Tap to enter my heart ❤️</button>
+    </div>
+
+    <div id="step2" class="page">
+        <div class="glass-card">
+            <h2 class="text-3xl font-cute mb-6 text-yellow-300">I have a surprise for you...</h2>
+            <p class="mb-8">Are you excited? 🙈</p>
+            <button onclick="nextStep('step3')" class="btn-cute">YESSS! 😍</button>
+        </div>
+    </div>
+
+    <div id="step3" class="page">
+        <div class="glass-card">
+            <h2 class="text-3xl font-cute mb-6 text-pink-300">Wait! Ek baat batao...</h2>
+            <p class="mb-8">Do you love me? 🥺</p>
+            <div class="flex gap-4 justify-center">
+                <button onclick="celebrateLove()" class="btn-cute">Yes, I do! ❤️</button>
+                <button id="no-btn" onmouseover="moveNo()" onclick="begLogic()" class="bg-gray-700 px-8 py-3 rounded-full">No</button>
+            </div>
+            <p id="beg-message" class="mt-6 text-pink-200 hidden italic text-sm">
+                "Please 🥺, bahut masum hai ham... itna masum kaha milega batao.."
+            </p>
+        </div>
+    </div>
+
+    <div id="step4" class="page">
+        <h2 class="font-cute text-4xl text-yellow-300 mb-8">Tap cards to see memories ✨</h2>
+        <div class="card-stack" id="stack">
+            <div class="photo-card" style="transform: rotate(3deg);">
+                <img src="https://images.unsplash.com/photo-1516589174184-c6852661448c">
+                <p class="quote-text">"Looking at you is my favorite thing to do."</p>
+            </div>
+            <div class="photo-card" style="transform: rotate(-2deg);">
+                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7">
+                <p class="quote-text">"Har saal bas tera sath chahiye."</p>
+            </div>
+            <div class="photo-card" style="transform: rotate(4deg);">
+                <img src="https://images.unsplash.com/photo-1494972308805-463bc619d34e">
+                <p class="quote-text">"You make every year feel like a dream."</p>
+            </div>
+            <div class="photo-card" id="top-card">
+                <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04">
+                <p class="quote-text">"2025: Just another year of loving you."</p>
+            </div>
+        </div>
+        <button onclick="nextStep('step5')" class="mt-10 text-pink-400 underline underline-offset-8">Read my letter ✉️</button>
+    </div>
+
+    <div id="step5" class="page" style="overflow-y: auto;">
+        <div class="glass-card mt-20 mb-20 text-left">
+            <h2 class="font-cute text-4xl mb-6 text-pink-300 text-center">My Love Letter...</h2>
+            <div class="space-y-4 text-gray-200 leading-relaxed italic text-sm md:text-base">
+                <p>To my beautiful Sukhi,</p>
+                <p>Dancing through life with you is all I ever want. This year, I promise to be the one who loves you through every sunrise and sunset.</p>
+                <p>You are my 'Perfect' in every way. Thank you for choosing me.</p>
+                <h3 class="text-3xl font-cute text-yellow-400 text-center mt-8">I love you Sukhi 💟</h3>
+                <p class="text-center opacity-60 text-xs">And thank you again.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startExperience() {
+            document.getElementById('bgMusic').play();
+            nextStep('step2');
+        }
+
+        function nextStep(stepId) {
+            const current = document.querySelector('.page.active');
+            const next = document.getElementById(stepId);
+            gsap.to(current, { opacity: 0, scale: 0.9, duration: 0.5, onComplete: () => {
+                current.classList.remove('active');
+                next.classList.add('active');
+                gsap.fromTo(next, { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.8 });
+            }});
+        }
+
+        function celebrateLove() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff6b6b', '#ffd700', '#ffffff'] });
+            setTimeout(() => nextStep('step4'), 1500);
+        }
+
+        function moveNo() {
+            const btn = document.getElementById('no-btn');
+            const x = Math.random() * (window.innerWidth - 100) - window.innerWidth/2;
+            const y = Math.random() * (window.innerHeight - 100) - window.innerHeight/2;
+            gsap.to(btn, { x: x, y: y, duration: 0.3 });
+        }
+
+        function begLogic() {
+            document.getElementById('beg-message').classList.remove('hidden');
+        }
+
+        // Card Swapping Logic
+        const cards = document.querySelectorAll('.photo-card');
+        let topIndex = cards.length - 1;
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                gsap.to(card, { x: 400, rotation: 20, opacity: 0, duration: 0.6, onComplete: () => {
+                    card.style.display = 'none';
+                    topIndex--;
+                    if (topIndex < 0) {
+                        // All cards gone - auto move or reset
+                    }
+                }});
+            });
+        });
+
+        // Background Hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '💟';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '-10%';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            document.body.appendChild(heart);
+            gsap.to(heart, { y: -window.innerHeight - 100, x: (Math.random()-0.5)*200, duration: Math.random()*3+4, onComplete: () => heart.remove() });
+        }
+        setInterval(createHeart, 500);
+    </script>
+</body>
+</html>
